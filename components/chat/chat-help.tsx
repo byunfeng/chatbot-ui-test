@@ -1,10 +1,10 @@
 import useHotkey from "@/lib/hooks/use-hotkey"
 import {
-  IconBrandGithub,
+  IconCalendarStats,
   IconBrandX,
   IconHelpCircle,
   IconQuestionMark,
-  FileText
+  IconFiles
 } from "@tabler/icons-react"
 import Link from "next/link"
 import { FC, useState } from "react"
@@ -49,7 +49,7 @@ export const ChatHelp: FC<ChatHelpProps> = ({}) => {
               target="_blank"
               rel="noopener noreferrer"
             >
-              <FileText/>
+              <IconFiles/>
             </Link>
           </div>
 
@@ -62,7 +62,7 @@ export const ChatHelp: FC<ChatHelpProps> = ({}) => {
               target="_blank"
               rel="noopener noreferrer"
             >
-              <IconHelpCircle size={24} />
+              <IconCalendarStats size={24} />
             </Link>
           </div>
         </DropdownMenuLabel>
