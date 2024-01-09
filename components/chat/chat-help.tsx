@@ -3,7 +3,8 @@ import {
   IconBrandGithub,
   IconBrandX,
   IconHelpCircle,
-  IconQuestionMark
+  IconQuestionMark,
+  FileText
 } from "@tabler/icons-react"
 import Link from "next/link"
 import { FC, useState } from "react"
@@ -44,11 +45,11 @@ export const ChatHelp: FC<ChatHelpProps> = ({}) => {
 
             <Link
               className="cursor-pointer hover:opacity-50"
-              href="https://github.com/apiskeyc/chatbot-ui"
+              href="https://platform.apiskey.com"
               target="_blank"
               rel="noopener noreferrer"
             >
-              <IconBrandGithub />
+              <FileText/>
             </Link>
           </div>
 
@@ -57,7 +58,7 @@ export const ChatHelp: FC<ChatHelpProps> = ({}) => {
 
             <Link
               className="cursor-pointer hover:opacity-50"
-              href="https://platform.apiskey.com"
+              href="https://status.apiskey.com"
               target="_blank"
               rel="noopener noreferrer"
             >
