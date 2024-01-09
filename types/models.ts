@@ -5,4 +5,3 @@ export type ModelProvider =
   | "mistral"
   | "llama"
   | "perplexity"
-  | "ollama"

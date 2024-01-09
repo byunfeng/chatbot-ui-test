@@ -16,7 +16,7 @@ export default function HomePage() {
   }, [])
 
   const getGitHubRepoStars = async () => {
-    const url = `https://api.github.com/repos/mckaywrigley/chatbot-ui`
+    const url = `https://api.github.com/repos/apiskeyc/chatbot-ui`
 
     try {
       const response = await fetch(url, {
