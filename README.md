@@ -2,7 +2,7 @@
 
 The open-source AI chat app for everyone.
 
-![Chatbot UI](./public/readme/screenshot.png)
+![Chatbot UI](./public/readme/Snipaste.jpg)
 
 ## Website
 
@@ -36,7 +36,11 @@ npm install
 
 On the "Settings" page, navigate to the "Integrations" section to integrate Supabase into your project.
 ### 5. Supabase.com Setting。
-After creating an account and a new project, go to the project settings (on Supabase.com)and click on "SQL Editor." Enter and run the SQL query statements from the files in the `\chatbot-ui\supabase\migrations` directory sequentially into the command line within the SQL Editor.
+After creating an account and a new project, go to the project settings (on Supabase.com)and click on "SQL Editor."
+
+Enter and run the SQL query statements from the files in the `\chatbot-ui\supabase\migrations` directory sequentially into the command line within the SQL Editor.
+
+In the 1st migration file 20240108234540_setup.sql, you will need to replace 2 values: `project_url` (line 53) and `service_role_key`(line 54), which can be found in the project settings on Supabase.com.
 
 ```bash
 20240108234540_setup.sql
@@ -106,8 +110,8 @@ LANGUAGE 'plpgsql'
 SECURITY DEFINER
 AS $$
 DECLARE
-  project_url TEXT := 'http://supabase_kong_chatbotui:8000';
-  service_role_key TEXT := 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImV4cCI6MTk4MzgxMjk5Nn0.EGIM96RAZx35lJzdJsyH-qQwv8Hdp7fsn3W0YpN81IU'; -- full access needed for http request to storage
+  project_url TEXT := 'http://yourproject_url(please change it)';
+  service_role_key TEXT := 'service_role_key(please change it)'; -- full access needed for http request to storage
   url TEXT := project_url || '/storage/v1/object/' || bucket || '/' || object;
 BEGIN
   SELECT
