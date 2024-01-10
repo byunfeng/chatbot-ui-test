@@ -11,10 +11,9 @@ View the latest web [here](https://apiskey.com/).
 ## How to Use on apiskey.com
 
 Sign up by filling in your email and password. You will receive an email in your inbox; click on the link provided. It's possible that you won't receive a confirmation of successful registration, but this is normal.
-Then, return to the Apiskey login page and sign in.
+Then, return to the Apiskey login page and sign in. The web can upload and parse PDF files, but please note that filenames with Chinese characters may cause issues.
+
 ## Support
-
-
 
 ## Vercel Quickstart
 
