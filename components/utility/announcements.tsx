@@ -12,16 +12,7 @@ import { SIDEBAR_ICON_SIZE } from "../sidebar/sidebar-switcher"
 interface AnnouncementsProps {}
 
 export const Announcements: FC<AnnouncementsProps> = () => {
-  const [announcements, setAnnouncements] = useState<Announcement[]>([
-    {
-      id: "1",
-      title: "Apiskey Docs",
-      content: "Updating",
-      read: true,
-      link: "https://platform.apiskey.com",
-      date: "1/9/24"
-    }
-  ])
+  const [announcements, setAnnouncements] = useState<Announcement[]>([])
 
   useEffect(() => {
     // Load announcements from local storage
