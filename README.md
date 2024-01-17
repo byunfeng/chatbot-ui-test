@@ -1,8 +1,8 @@
-# Chatbot UI
+# Apiskey
 
 The open-source AI chat app for everyone.
 
-![Chatbot UI](./public/readme/Snipaste.jpg)
+![Apiskey](./public/readme/Snipaste.jpg)
 
 ## Website
 
@@ -12,6 +12,14 @@ View the latest web [here](https://apiskey.com/).
 
 Sign up by filling in your email and password. You will receive an email in your inbox; click on the link provided. It's possible that you won't receive a confirmation of successful registration, but this is normal.
 Then, return to the Apiskey login page and sign in. The web can upload and parse PDF files, but please note that filenames with Chinese characters may cause issues.
+
+## Official Hosted Version
+
+Check back soon for an official hosted version of Apiskey.
+
+## Official Desktop App
+
+Check back soon for an official desktop app for Chatbot UI. Just click download & start chatting - no setup required.
 
 ## Support
 
@@ -24,18 +32,30 @@ https://github.com/apiskeyc/chatbot-ui
 ### 2. Creat New Project On Vercel
 
 
-### 3. Build & Development Settings
+### 3. Analytics and Build & Development Settings
+
+In the "Analytics" section enable Web Analytics
 
 In the "Settings" section, navigate to the "Build & Development Settings" page. Look for the "Install Command" option. Override it with 
+
+Production Overrides
 
 ```bash
 npm install
 ```
 
+Project Settings Overrides
+
+```bash
+npm install @vercel/analytics
+```
+
 ### 4. Integrations Supabase With Vercel
 
 On the "Settings" page, navigate to the "Integrations" section to integrate Supabase into your project.
+
 ### 5. Supabase.com Setting。
+
 After creating an account and a new project, go to the project settings (on Supabase.com)and click on "SQL Editor."
 
 Enter and run the SQL query statements from the files in the `\chatbot-ui\supabase\migrations` directory sequentially into the command line within the SQL Editor.
@@ -56,7 +76,9 @@ In the 1st migration file 20240108234540_setup.sql, you will need to replace 2 v
 20240108234550_add_prompts.sql
 20240108234551_add_collections.sql
 ```
+
 For example, copy and paste the SQL queries into the SQL Editor and run them.
+
 ```sql
 -- Enable HTTP extension
 create extension http with schema extensions;
@@ -142,6 +164,7 @@ $$;
 ```
 
 The steps mentioned above are for manually creating tables in your Supabase project.
+
 ### 6. Redeploy
 
 Redeploy the vercel project

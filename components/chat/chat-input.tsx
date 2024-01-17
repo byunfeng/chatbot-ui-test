@@ -1,12 +1,13 @@
 import { ChatbotUIContext } from "@/context/context"
 import useHotkey from "@/lib/hooks/use-hotkey"
+import { LLM_LIST } from "@/lib/models/llm/llm-list"
 import { cn } from "@/lib/utils"
 import {
   IconCirclePlus,
   IconPlayerStopFilled,
   IconSend
 } from "@tabler/icons-react"
-import { FC, useContext, useEffect, useRef } from "react"
+import { FC, useContext, useEffect, useRef, useState } from "react"
 import { Input } from "../ui/input"
 import { TextareaAutosize } from "../ui/textarea-autosize"
 import { ChatCommandInput } from "./chat-command-input"
@@ -22,6 +23,8 @@ export const ChatInput: FC<ChatInputProps> = ({}) => {
     handleFocusChatInput()
   })
 
+  const [isTyping, setIsTyping] = useState<boolean>(false)
+
   const {
     userInput,
     chatMessages,
@@ -34,7 +37,8 @@ export const ChatInput: FC<ChatInputProps> = ({}) => {
     isPromptPickerOpen,
     setIsPromptPickerOpen,
     isAtPickerOpen,
-    setFocusFile
+    setFocusFile,
+    chatSettings
   } = useContext(ChatbotUIContext)
 
   const {
@@ -56,21 +60,63 @@ export const ChatInput: FC<ChatInputProps> = ({}) => {
     }, 200) // FIX: hacky
   }, [selectedPreset, selectedAssistant])
 
+  useEffect(() => {
+    const textarea = chatInputRef.current
+    if (textarea) {
+      const handleCompositionStart = () => setIsTyping(true)
+      const handleCompositionEnd = () => setIsTyping(false)
+
+      textarea.addEventListener("compositionstart", handleCompositionStart)
+      textarea.addEventListener("compositionend", handleCompositionEnd)
+
+      return () => {
+        textarea.removeEventListener("compositionstart", handleCompositionStart)
+        textarea.removeEventListener("compositionend", handleCompositionEnd)
+      }
+    }
+  }, [chatInputRef])
+
   const handleKeyDown = (event: React.KeyboardEvent) => {
-    if (event.key === "Enter" && !event.shiftKey) {
+    if (!isTyping && event.key === "Enter" && !event.shiftKey) {
       event.preventDefault()
       setIsPromptPickerOpen(false)
       handleSendMessage(userInput, chatMessages, false)
     }
 
-    if (event.key === "Tab" && isPromptPickerOpen) {
+    if (
+      isPromptPickerOpen &&
+      (event.key === "Tab" ||
+        event.key === "ArrowUp" ||
+        event.key === "ArrowDown")
+    ) {
       event.preventDefault()
       setFocusPrompt(!focusPrompt)
     }
 
-    if (event.key === "Tab" && isAtPickerOpen) {
+    if (
+      isAtPickerOpen &&
+      (event.key === "Tab" ||
+        event.key === "ArrowUp" ||
+        event.key === "ArrowDown")
+    ) {
       event.preventDefault()
       setFocusFile(!focusFile)
+    }
+  }
+
+  const handlePaste = (event: React.ClipboardEvent) => {
+    const imagesAllowed = LLM_LIST.find(
+      llm => llm.modelId === chatSettings?.model
+    )?.imageInput
+    if (!imagesAllowed) return
+
+    const items = event.clipboardData.items
+    for (const item of items) {
+      if (item.type.indexOf("image") === 0) {
+        const file = item.getAsFile()
+        if (!file) return
+        handleSelectDeviceFile(file)
+      }
     }
   }
 
@@ -106,12 +152,13 @@ export const ChatInput: FC<ChatInputProps> = ({}) => {
         <TextareaAutosize
           textareaRef={chatInputRef}
           className="ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring text-md flex w-full resize-none rounded-md border-none bg-transparent px-14 py-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
-          placeholder="Send a message..."
+          placeholder={`Ask anything. Type "@" for files. Type "/" for prompts.`}
           onValueChange={handleInputChange}
           value={userInput}
           minRows={1}
-          maxRows={20}
+          maxRows={18}
           onKeyDown={handleKeyDown}
+          onPaste={handlePaste}
         />
 
         <div className="absolute bottom-[14px] right-3 cursor-pointer hover:opacity-50">

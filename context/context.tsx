@@ -1,5 +1,12 @@
 import { Tables } from "@/supabase/types"
-import { ChatFile, ChatMessage, ChatSettings, LLM, MessageImage } from "@/types"
+import {
+  ChatFile,
+  ChatMessage,
+  ChatSettings,
+  LLM,
+  MessageImage,
+  OpenRouterLLM
+} from "@/types"
 import { AssistantImage } from "@/types/assistant-image"
 import { Dispatch, SetStateAction, createContext } from "react"
 
@@ -16,6 +23,7 @@ interface ChatbotUIContext {
   folders: Tables<"folders">[]
   presets: Tables<"presets">[]
   prompts: Tables<"prompts">[]
+  tools: Tables<"tools">[]
   workspaces: Tables<"workspaces">[]
   setAssistants: Dispatch<SetStateAction<Tables<"assistants">[]>>
   setCollections: Dispatch<SetStateAction<Tables<"collections">[]>>
@@ -24,11 +32,14 @@ interface ChatbotUIContext {
   setFolders: Dispatch<SetStateAction<Tables<"folders">[]>>
   setPresets: Dispatch<SetStateAction<Tables<"presets">[]>>
   setPrompts: Dispatch<SetStateAction<Tables<"prompts">[]>>
+  setTools: Dispatch<SetStateAction<Tables<"tools">[]>>
   setWorkspaces: Dispatch<SetStateAction<Tables<"workspaces">[]>>
 
   // MODELS STORE
   availableLocalModels: LLM[]
   setAvailableLocalModels: Dispatch<SetStateAction<LLM[]>>
+  availableOpenRouterModels: OpenRouterLLM[]
+  setAvailableOpenRouterModels: Dispatch<SetStateAction<OpenRouterLLM[]>>
 
   // WORKSPACE STORE
   selectedWorkspace: Tables<"workspaces"> | null
@@ -86,13 +97,17 @@ interface ChatbotUIContext {
   newMessageFiles: ChatFile[]
   newMessageImages: MessageImage[]
   showFilesDisplay: boolean
-  useRetrieval: boolean
   setChatFiles: Dispatch<SetStateAction<ChatFile[]>>
   setChatImages: Dispatch<SetStateAction<MessageImage[]>>
   setNewMessageFiles: Dispatch<SetStateAction<ChatFile[]>>
   setNewMessageImages: Dispatch<SetStateAction<MessageImage[]>>
   setShowFilesDisplay: Dispatch<SetStateAction<boolean>>
+
+  // RETRIEVAL STORE
+  useRetrieval: boolean
+  sourceCount: number
   setUseRetrieval: Dispatch<SetStateAction<boolean>>
+  setSourceCount: Dispatch<SetStateAction<number>>
 }
 
 export const ChatbotUIContext = createContext<ChatbotUIContext>({
@@ -108,6 +123,7 @@ export const ChatbotUIContext = createContext<ChatbotUIContext>({
   folders: [],
   presets: [],
   prompts: [],
+  tools: [],
   workspaces: [],
   setAssistants: () => {},
   setCollections: () => {},
@@ -116,11 +132,14 @@ export const ChatbotUIContext = createContext<ChatbotUIContext>({
   setFolders: () => {},
   setPresets: () => {},
   setPrompts: () => {},
+  setTools: () => {},
   setWorkspaces: () => {},
 
   // MODELS STORE
   availableLocalModels: [],
   setAvailableLocalModels: () => {},
+  availableOpenRouterModels: [],
+  setAvailableOpenRouterModels: () => {},
 
   // WORKSPACE STORE
   selectedWorkspace: null,
@@ -178,11 +197,16 @@ export const ChatbotUIContext = createContext<ChatbotUIContext>({
   newMessageFiles: [],
   newMessageImages: [],
   showFilesDisplay: false,
-  useRetrieval: false,
+
   setChatFiles: () => {},
   setChatImages: () => {},
   setNewMessageFiles: () => {},
   setNewMessageImages: () => {},
   setShowFilesDisplay: () => {},
-  setUseRetrieval: () => {}
+
+  // RETRIEVAL STORE
+  useRetrieval: false,
+  sourceCount: 4,
+  setUseRetrieval: () => {},
+  setSourceCount: () => {}
 })

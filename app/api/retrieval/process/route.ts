@@ -1,13 +1,12 @@
 import { generateLocalEmbedding } from "@/lib/generate-local-embedding"
-import { processCSV } from "@/lib/retrieval/processing/csv"
-import { processDoc } from "@/lib/retrieval/processing/doc"
-import { processDocX } from "@/lib/retrieval/processing/docx"
-import { processHTML } from "@/lib/retrieval/processing/html"
-import { processJSON } from "@/lib/retrieval/processing/json"
-import { processMarkdown } from "@/lib/retrieval/processing/md"
-import { processPdf } from "@/lib/retrieval/processing/pdf"
-import { processTxt } from "@/lib/retrieval/processing/txt"
-import { checkApiKey, getServerProfile } from "@/lib/server-chat-helpers"
+import {
+  processCSV,
+  processJSON,
+  processMarkdown,
+  processPdf,
+  processTxt
+} from "@/lib/retrieval/processing"
+import { checkApiKey, getServerProfile } from "@/lib/server/server-chat-helpers"
 import { Database } from "@/supabase/types"
 import { FileItemChunk } from "@/types"
 import { createClient } from "@supabase/supabase-js"
@@ -43,15 +42,6 @@ export async function POST(req: Request) {
       case "csv":
         chunks = await processCSV(blob)
         break
-      case "doc":
-        chunks = await processDoc(blob)
-        break
-      case "docx":
-        chunks = await processDocX(blob)
-        break
-      case "html":
-        chunks = await processHTML(blob)
-        break
       case "json":
         chunks = await processJSON(blob)
         break
@@ -63,9 +53,9 @@ export async function POST(req: Request) {
         break
       case "txt":
         chunks = await processTxt(blob)
-        break
+        break 
       default:
-        return new NextResponse("Unsupported file type", {
+        return new NextResponse("Unsupported file type, Not csv,json,md,pdf,txt file", {
           status: 400
         })
     }

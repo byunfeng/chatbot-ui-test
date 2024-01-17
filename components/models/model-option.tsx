@@ -2,7 +2,7 @@ import { ChatbotUIContext } from "@/context/context"
 import { isModelLocked } from "@/lib/is-model-locked"
 import { LLM, LLMID } from "@/types"
 import { IconLock } from "@tabler/icons-react"
-import { FC, useContext } from "react"
+import { FC, useContext, useEffect, useState } from "react"
 import { WithTooltip } from "../ui/with-tooltip"
 import { ModelIcon } from "./model-icon"
 
@@ -13,10 +13,25 @@ interface ModelOptionProps {
 
 export const ModelOption: FC<ModelOptionProps> = ({ model, onSelect }) => {
   const { profile } = useContext(ChatbotUIContext)
+  const [isLocked, setIsLocked] = useState<Boolean>(true)
+
+  useEffect(() => {
+    async function setup() {
+      if (!profile) return null
+
+      const isUsingAzure = profile?.use_azure_openai
+
+      const locked = await isModelLocked(
+        model.provider === "openai" && isUsingAzure ? "azure" : model.provider,
+        profile
+      )
+
+      setIsLocked(locked)
+    }
+    setup()
+  }, [model, profile])
 
   if (!profile) return null
-
-  const isLocked = isModelLocked(model.provider, profile)
 
   const handleSelectModel = () => {
     if (isLocked) return

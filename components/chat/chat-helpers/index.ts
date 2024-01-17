@@ -55,14 +55,16 @@ export const handleRetrieval = async (
   userInput: string,
   newMessageFiles: ChatFile[],
   chatFiles: ChatFile[],
-  embeddingsProvider: "openai" | "local"
+  embeddingsProvider: "openai" | "local",
+  sourceCount: number
 ) => {
   const response = await fetch("/api/retrieval/retrieve", {
     method: "POST",
     body: JSON.stringify({
       userInput,
       fileIds: [...newMessageFiles, ...chatFiles].map(file => file.id),
-      embeddingsProvider
+      embeddingsProvider,
+      sourceCount
     })
   })
 
@@ -282,41 +284,45 @@ export const processResponse = async (
   let fullText = ""
   let contentToAdd = ""
 
-  await consumeReadableStream(
-    response.body,
-    (chunk: any) => {
-      setFirstTokenReceived(true)
-      setToolInUse("none")
+  if (response.body) {
+    await consumeReadableStream(
+      response.body,
+      chunk => {
+        setFirstTokenReceived(true)
+        setToolInUse("none")
 
-      try {
-        contentToAdd = isHosted ? chunk : JSON.parse(chunk).message.content
-        fullText += contentToAdd
-      } catch (error) {
-        console.error("Error parsing JSON:", error)
-      }
+        try {
+          contentToAdd = isHosted ? chunk : JSON.parse(chunk).message.content
+          fullText += contentToAdd
+        } catch (error) {
+          console.error("Error parsing JSON:", error)
+        }
 
-      setChatMessages(prev =>
-        prev.map(chatMessage => {
-          if (chatMessage.message.id === lastChatMessage.message.id) {
-            const updatedChatMessage: ChatMessage = {
-              message: {
-                ...chatMessage.message,
-                content: chatMessage.message.content + contentToAdd
-              },
-              fileItems: chatMessage.fileItems
+        setChatMessages(prev =>
+          prev.map(chatMessage => {
+            if (chatMessage.message.id === lastChatMessage.message.id) {
+              const updatedChatMessage: ChatMessage = {
+                message: {
+                  ...chatMessage.message,
+                  content: chatMessage.message.content + contentToAdd
+                },
+                fileItems: chatMessage.fileItems
+              }
+
+              return updatedChatMessage
             }
 
-            return updatedChatMessage
-          }
+            return chatMessage
+          })
+        )
+      },
+      controller.signal
+    )
 
-          return chatMessage
-        })
-      )
-    },
-    controller.signal
-  )
-
-  return fullText
+    return fullText
+  } else {
+    throw new Error("Response body is null")
+  }
 }
 
 export const handleCreateChat = async (
@@ -371,7 +377,10 @@ export const handleCreateMessages = async (
   isRegeneration: boolean,
   retrievedFileItems: Tables<"file_items">[],
   setChatMessages: React.Dispatch<React.SetStateAction<ChatMessage[]>>,
-  setChatFileItems: React.Dispatch<React.SetStateAction<Tables<"file_items">[]>>
+  setChatFileItems: React.Dispatch<
+    React.SetStateAction<Tables<"file_items">[]>
+  >,
+  setChatImages: React.Dispatch<React.SetStateAction<MessageImage[]>>
 ) => {
   const finalUserMessage: TablesInsert<"messages"> = {
     chat_id: currentChat.id,
@@ -432,7 +441,15 @@ export const handleCreateMessages = async (
       Boolean
     ) as string[]
 
-    updateMessage(createdMessages[0].id, {
+    setChatImages(prevImages => [
+      ...prevImages,
+      ...newMessageImages.map(obj => ({
+        ...obj,
+        messageId: createdMessages[0].id
+      }))
+    ])
+
+    const updatedMessage = await updateMessage(createdMessages[0].id, {
       ...createdMessages[0],
       image_paths: paths
     })
@@ -450,7 +467,7 @@ export const handleCreateMessages = async (
     finalChatMessages = [
       ...chatMessages,
       {
-        message: createdMessages[0],
+        message: updatedMessage,
         fileItems: []
       },
       {

@@ -49,6 +49,7 @@ export default function SetupPage() {
   const [googleGeminiAPIKey, setGoogleGeminiAPIKey] = useState("")
   const [mistralAPIKey, setMistralAPIKey] = useState("")
   const [perplexityAPIKey, setPerplexityAPIKey] = useState("")
+  const [openrouterAPIKey, setOpenrouterAPIKey] = useState("")
 
   // Workspace Step
   const [workspaceInstructions, setWorkspaceInstructions] = useState("")
@@ -100,6 +101,7 @@ export default function SetupPage() {
       google_gemini_api_key: googleGeminiAPIKey,
       mistral_api_key: mistralAPIKey,
       perplexity_api_key: perplexityAPIKey,
+      openrouter_api_key: openrouterAPIKey,
       use_azure_openai: useAzureOpenai,
       azure_openai_api_key: azureOpenaiAPIKey,
       azure_openai_endpoint: azureOpenaiEndpoint,
@@ -151,7 +153,7 @@ export default function SetupPage() {
           <StepContainer
             stepDescription="Let's create your profile."
             stepNum={currentStep}
-            stepTitle="Welcome to Chatbot UI"
+            stepTitle="Welcome to Apiskey"
             onShouldProceed={handleShouldProceed}
             showNextButton={!!(displayName && username && usernameAvailable)}
             showBackButton={false}
@@ -209,6 +211,8 @@ export default function SetupPage() {
               onMistralAPIKeyChange={setMistralAPIKey}
               onPerplexityAPIKeyChange={setPerplexityAPIKey}
               onUseAzureOpenaiChange={setUseAzureOpenai}
+              openrouterAPIKey={openrouterAPIKey}
+              onOpenrouterAPIKeyChange={setOpenrouterAPIKey}
             />
           </StepContainer>
         )
@@ -271,7 +275,7 @@ export default function SetupPage() {
         }
       }
     })()
-  }, [])
+  }, [router])
 
   if (loading) {
     return null

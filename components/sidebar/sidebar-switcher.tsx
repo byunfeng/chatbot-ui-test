@@ -1,6 +1,7 @@
 import { ContentType } from "@/types"
 import {
   IconAdjustmentsHorizontal,
+  IconBooks,
   IconFile,
   IconMessage,
   IconPencil
@@ -47,17 +48,21 @@ export const SidebarSwitcher: FC<SidebarSwitcherProps> = ({
           onContentTypeChange={onContentTypeChange}
         />
 
-        {/* TODO */}
-        {/* <SidebarSwitchItem
+        <SidebarSwitchItem
           icon={<IconBooks size={SIDEBAR_ICON_SIZE} />}
           contentType="collections"
           onContentTypeChange={onContentTypeChange}
-        /> */}
+        />
 
-        {/* TODO */}
         {/* <SidebarSwitchItem
           icon={<IconRobotFace size={SIDEBAR_ICON_SIZE} />}
           contentType="assistants"
+          onContentTypeChange={onContentTypeChange}
+        />gi
+
+        <SidebarSwitchItem
+          icon={<IconBolt size={SIDEBAR_ICON_SIZE} />}
+          contentType="tools"
           onContentTypeChange={onContentTypeChange}
         /> */}
       </TabsList>
