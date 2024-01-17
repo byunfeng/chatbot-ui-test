@@ -1,10 +1,9 @@
 import useHotkey from "@/lib/hooks/use-hotkey"
 import {
-  IconCalendarStats,
+  IconBrandGithub,
   IconBrandX,
   IconHelpCircle,
-  IconQuestionMark,
-  IconFiles
+  IconQuestionMark
 } from "@tabler/icons-react"
 import Link from "next/link"
 import { FC, useState } from "react"
@@ -36,7 +35,7 @@ export const ChatHelp: FC<ChatHelpProps> = ({}) => {
           <div className="flex space-x-2">
             <Link
               className="cursor-pointer hover:opacity-50"
-              href="https://twitter.com/HikaFeng"
+              href="https://twitter.com/Hikafeng"
               target="_blank"
               rel="noopener noreferrer"
             >
@@ -45,11 +44,11 @@ export const ChatHelp: FC<ChatHelpProps> = ({}) => {
 
             <Link
               className="cursor-pointer hover:opacity-50"
-              href="https://platform.apiskey.com"
+              href="https://github.com/apiskeyc/chatbot-ui"
               target="_blank"
               rel="noopener noreferrer"
             >
-              <IconFiles/>
+              <IconBrandGithub />
             </Link>
           </div>
 
@@ -58,11 +57,11 @@ export const ChatHelp: FC<ChatHelpProps> = ({}) => {
 
             <Link
               className="cursor-pointer hover:opacity-50"
-              href="https://status.apiskey.com"
+              href="https://platform.apiskey.com"
               target="_blank"
               rel="noopener noreferrer"
             >
-              <IconCalendarStats size={24} />
+              <IconHelpCircle size={24} />
             </Link>
           </div>
         </DropdownMenuLabel>
@@ -175,7 +174,7 @@ export const ChatHelp: FC<ChatHelpProps> = ({}) => {
         </DropdownMenuItem>
 
         <DropdownMenuItem className="flex justify-between">
-          <div>Open Presets</div>
+          <div>Open Quick Settings</div>
           <div className="flex opacity-60">
             <div className="min-w-[30px] rounded border-[1px] p-1 text-center">
               ⌘

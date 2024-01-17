@@ -3,8 +3,10 @@ import { ChatbotUIContext } from "@/context/context"
 import { LLM_LIST } from "@/lib/models/llm/llm-list"
 import { cn } from "@/lib/utils"
 import { Tables } from "@/supabase/types"
-import { LLMID, MessageImage } from "@/types"
+import { LLM, LLMID, MessageImage } from "@/types"
 import {
+  IconCaretDownFilled,
+  IconCaretRightFilled,
   IconCircleFilled,
   IconFileFilled,
   IconFileText,
@@ -20,6 +22,7 @@ import { Avatar, AvatarImage } from "../ui/avatar"
 import { Button } from "../ui/button"
 import { FilePreview } from "../ui/file-preview"
 import { TextareaAutosize } from "../ui/textarea-autosize"
+import { WithTooltip } from "../ui/with-tooltip"
 import { MessageActions } from "./message-actions"
 import { MessageMarkdown } from "./message-markdown"
 
@@ -50,6 +53,7 @@ export const Message: FC<MessageProps> = ({
     setIsGenerating,
     firstTokenReceived,
     availableLocalModels,
+    availableOpenRouterModels,
     chatMessages,
     selectedAssistant,
     chatImages,
@@ -72,6 +76,8 @@ export const Message: FC<MessageProps> = ({
   const [selectedFileItem, setSelectedFileItem] =
     useState<Tables<"file_items"> | null>(null)
 
+  const [viewSources, setViewSources] = useState(false)
+
   const handleCopy = () => {
     navigator.clipboard.writeText(message.content)
   }
@@ -89,7 +95,11 @@ export const Message: FC<MessageProps> = ({
 
   const handleRegenerate = async () => {
     setIsGenerating(true)
-    await handleSendMessage(editedMessage, chatMessages, true)
+    await handleSendMessage(
+      editedMessage || chatMessages[chatMessages.length - 2].message.content,
+      chatMessages,
+      true
+    )
   }
 
   const handleStartEdit = () => {
@@ -106,9 +116,11 @@ export const Message: FC<MessageProps> = ({
     }
   }, [isEditing])
 
-  const MODEL_DATA = [...LLM_LIST, ...availableLocalModels].find(
-    llm => llm.modelId === message.model
-  )
+  const MODEL_DATA = [
+    ...LLM_LIST,
+    ...availableLocalModels,
+    ...availableOpenRouterModels
+  ].find(llm => llm.modelId === message.model) as LLM
 
   const selectedAssistantImage = assistantImages.find(
     image => image.path === selectedAssistant?.image_path
@@ -165,10 +177,15 @@ export const Message: FC<MessageProps> = ({
                     />
                   )
                 ) : (
-                  <ModelIcon
-                    modelId={message.model as LLMID}
-                    height={ICON_SIZE}
-                    width={ICON_SIZE}
+                  <WithTooltip
+                    display={<div>{MODEL_DATA.modelName}</div>}
+                    trigger={
+                      <ModelIcon
+                        modelId={message.model as LLMID}
+                        height={ICON_SIZE}
+                        width={ICON_SIZE}
+                      />
+                    }
                   />
                 )
               ) : profile?.image_url ? (
@@ -230,55 +247,74 @@ export const Message: FC<MessageProps> = ({
 
         {fileItems.length > 0 && (
           <div className="mt-6 text-lg font-bold">
-            <div>Sources</div>
+            {!viewSources ? (
+              <div
+                className="flex cursor-pointer items-center hover:opacity-50"
+                onClick={() => setViewSources(true)}
+              >
+                View {fileItems.length} Sources{" "}
+                <IconCaretRightFilled className="ml-1" />
+              </div>
+            ) : (
+              <>
+                <div
+                  className="flex cursor-pointer items-center hover:opacity-50"
+                  onClick={() => setViewSources(false)}
+                >
+                  Sources <IconCaretDownFilled className="ml-1" />
+                </div>
 
-            <div className="mt-2 grid grid-cols-2 gap-2">
-              {fileItems.map((fileItem, index) => {
-                const parentFile = files.find(
-                  file => file.id === fileItem.file_id
-                )
+                <div className="mt-2 grid grid-cols-2 gap-2">
+                  {fileItems.map((fileItem, index) => {
+                    const parentFile = files.find(
+                      file => file.id === fileItem.file_id
+                    )
 
-                return (
-                  <div
-                    key={index}
-                    className="border-primary flex cursor-pointer items-center space-x-4 rounded-xl border px-4 py-3 hover:opacity-50"
-                    onClick={() => {
-                      setSelectedFileItem(fileItem)
-                      setShowFileItemPreview(true)
-                    }}
-                  >
-                    <div className="rounded bg-blue-500 p-2">
-                      {(() => {
-                        let fileExtension = parentFile?.type.includes("/")
-                          ? parentFile.type.split("/")[1]
-                          : parentFile?.type
+                    return (
+                      <div
+                        key={index}
+                        className="border-primary flex cursor-pointer items-center space-x-4 rounded-xl border px-4 py-3 hover:opacity-50"
+                        onClick={() => {
+                          setSelectedFileItem(fileItem)
+                          setShowFileItemPreview(true)
+                        }}
+                      >
+                        <div className="rounded bg-blue-500 p-2">
+                          {(() => {
+                            let fileExtension = parentFile?.type.includes("/")
+                              ? parentFile.type.split("/")[1]
+                              : parentFile?.type
 
-                        switch (fileExtension) {
-                          case "pdf":
-                            return <IconFileTypePdf />
-                          default:
-                            return <IconFileFilled />
-                        }
-                      })()}
-                    </div>
+                            switch (fileExtension) {
+                              case "pdf":
+                                return <IconFileTypePdf />
+                              default:
+                                return <IconFileFilled />
+                            }
+                          })()}
+                        </div>
 
-                    <div className="w-fit space-y-1 text-wrap text-sm">
-                      <div className="">{parentFile?.name}</div>
+                        <div className="w-fit space-y-1 truncate text-wrap text-xs">
+                          <div className="truncate">{parentFile?.name}</div>
 
-                      <div className="text-xs opacity-50">
-                        {fileItem.content.substring(0, 70)}...
+                          <div className="truncate text-xs opacity-50">
+                            {fileItem.content.substring(0, 60)}...
+                          </div>
+                        </div>
                       </div>
-                    </div>
-                  </div>
-                )
-              })}
-            </div>
+                    )
+                  })}
+                </div>
+              </>
+            )}
           </div>
         )}
 
         <div className="mt-3 flex flex-wrap gap-2">
           {message.image_paths.map((path, index) => {
-            const item = chatImages.find(image => image.path === path)
+            const item = chatImages.find(
+              image => image.messageId === message.id
+            )
 
             return (
               <Image

@@ -1,3 +1,4 @@
+import { Metadata } from "next"
 import { Toaster } from "@/components/ui/sonner"
 import { GlobalState } from "@/components/utility/global-state"
 import { Providers } from "@/components/utility/providers"
@@ -6,12 +7,22 @@ import { createServerClient } from "@supabase/ssr"
 import { Inter } from "next/font/google"
 import { cookies } from "next/headers"
 import { ReactNode } from "react"
+import { Analytics } from '@vercel/analytics/react';
+
+
 import "./globals.css"
 
 const inter = Inter({ subsets: ["latin"] })
 
 interface RootLayoutProps {
   children: ReactNode
+}
+
+export const metadata: Metadata = {
+  title: {
+    template: "%s | Apiskey | Convenient AIGC API Access",
+    default: "Apiskey"
+  }
 }
 
 export default async function RootLayout({ children }: RootLayoutProps) {
@@ -38,6 +49,7 @@ export default async function RootLayout({ children }: RootLayoutProps) {
             {session ? <GlobalState>{children}</GlobalState> : children}
           </div>
         </Providers>
+        <Analytics />
       </body>
     </html>
   )
